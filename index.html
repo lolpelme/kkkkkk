@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delta Барбершоп</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#333333',secondary:'#666666'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Montserrat', sans-serif;
+color: #333;
+}
+.nav-link {
+position: relative;
+}
+.nav-link::after {
+content: '';
+position: absolute;
+width: 0;
+height: 2px;
+bottom: -4px;
+left: 0;
+background-color: #333333;
+transition: width 0.3s;
+}
+.nav-link:hover::after, .nav-link.active::after {
+width: 100%;
+}
+.service-content {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.5s ease;
+}
+.service-content.expanded {
+max-height: 1000px;
+}
+input[type="checkbox"], input[type="radio"] {
+appearance: none;
+-webkit-appearance: none;
+width: 20px;
+height: 20px;
+border: 2px solid #333333;
+border-radius: 4px;
+outline: none;
+cursor: pointer;
+position: relative;
+}
+input[type="checkbox"]:checked::before {
+content: '';
+position: absolute;
+width: 12px;
+height: 12px;
+background-color: #333333;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+border-radius: 2px;
+}
+input[type="radio"] {
+border-radius: 50%;
+}
+input[type="radio"]:checked::before {
+content: '';
+position: absolute;
+width: 12px;
+height: 12px;
+background-color: #333333;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+border-radius: 50%;
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 50px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .4s;
+border-radius: 24px;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .slider {
+background-color: #333333;
+}
+input:checked + .slider:before {
+transform: translateX(26px);
+}
+.star-rating {
+display: inline-flex;
+font-size: 1.5rem;
+color: #ccc;
+}
+.star-rating .filled {
+color: #FFD700;
+}
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.5);
+z-index: 1000;
+justify-content: center;
+align-items: center;
+}
+.modal.show {
+display: flex;
+}
+.tab-content {
+display: none;
+}
+.tab-content.active {
+display: block;
+}
+.more-works {
+display: none;
+}
+.more-works.show {
+display: grid;
+}
+@media (max-width: 768px) {
+.desktop-menu {
+display: none;
+}
+.mobile-menu {
+display: block;
+}
+.mobile-menu-container {
+display: none;
+position: fixed;
+top: 70px;
+left: 0;
+width: 100%;
+background-color: white;
+z-index: 100;
+padding: 1rem;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.mobile-menu-container.show {
+display: block;
+}
+}
+@media (min-width: 769px) {
+.desktop-menu {
+display: flex;
+}
+.mobile-menu {
+display: none;
+}
+}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+filter: invert(0.5);
+cursor: pointer;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<!-- Навигация -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 py-4 flex justify-between items-center">
+<div class="flex items-center">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center mr-2">
+<i class="ri-scissors-line ri-xl text-primary"></i>
+</div>
+<span class="font-['Pacifico'] text-2xl text-primary">Delta</span>
+</div>
+<nav class="ml-12 hidden md:flex items-center space-x-8">
+<a href="#home" class="nav-link text-gray-700 hover:text-primary transition-colors active">Главная</a>
+<a href="#about" class="nav-link text-gray-700 hover:text-primary transition-colors">О нас</a>
+<a href="#works" class="nav-link text-gray-700 hover:text-primary transition-colors">Наши работы</a>
+</nav>
+</div>
+<div class="flex items-center">
+<button id="enrollBtn" class="bg-primary text-white px-6 py-2 !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">Записаться</button>
+</div>
+</div>
+</header>
+<!-- Главная страница -->
+<div id="home" class="tab-content active">
+<!-- Hero секция -->
+<section class="py-16 bg-gray-100">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row items-center">
+<div class="md:w-1/2 mb-8 md:mb-0">
+<h1 class="text-4xl md:text-5xl font-bold mb-6">Барбершоп Delta</h1>
+<p class="text-xl text-gray-600 mb-8">Мы создаем не просто стрижки, а стиль, который подчеркивает вашу индивидуальность</p>
+<button id="enrollBtnHero" class="bg-primary text-white px-8 py-3 !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">Записаться сейчас</button>
+</div>
+<div class="md:w-1/2">
+<img src="https://readdy.ai/api/search-image?query=modern%20barbershop%20interior%20with%20stylish%20chairs%2C%20mirrors%2C%20and%20barber%20tools%2C%20minimalist%20design%20with%20gray%20and%20white%20tones%2C%20professional%20atmosphere%2C%20high-quality%20equipment%2C%20clean%20and%20organized%20space&width=600&height=400&seq=1&orientation=landscape" alt="Барбершоп интерьер" class="w-full h-auto rounded-lg shadow-lg object-cover object-top">
+</div>
+</div>
+</div>
+</section>
+<!-- Почему мы? -->
+<section class="py-16">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">Почему выбирают нас?</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-white p-8 rounded-lg shadow-md text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-user-star-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-3">Опытные мастера</h3>
+<p class="text-gray-600">Наши барберы имеют многолетний опыт и регулярно повышают квалификацию</p>
+</div>
+<div class="bg-white p-8 rounded-lg shadow-md text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-scissors-2-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-3">Качественные материалы</h3>
+<p class="text-gray-600">Мы используем только профессиональные инструменты и премиальную косметику</p>
+</div>
+<div class="bg-white p-8 rounded-lg shadow-md text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-community-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-3">Атмосфера</h3>
+<p class="text-gray-600">Комфортная обстановка, где вы можете расслабиться и получить удовольствие</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Часы работы и прайс-лист -->
+<section class="py-16 bg-gray-100">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row gap-8">
+<!-- Часы работы -->
+<div class="md:w-1/2 bg-white p-8 rounded-lg shadow-md">
+<h2 class="text-2xl font-bold mb-6">Часы работы</h2>
+<table class="w-full">
+<tbody>
+<tr class="border-b border-gray-200">
+<td class="py-3 font-medium">Понедельник</td>
+<td class="py-3 text-right">10:00 - 20:00</td>
+</tr>
+<tr class="border-b border-gray-200">
+<td class="py-3 font-medium">Вторник</td>
+<td class="py-3 text-right">10:00 - 20:00</td>
+</tr>
+<tr class="border-b border-gray-200">
+<td class="py-3 font-medium">Среда</td>
+<td class="py-3 text-right">10:00 - 20:00</td>
+</tr>
+<tr class="border-b border-gray-200">
+<td class="py-3 font-medium">Четверг</td>
+<td class="py-3 text-right">10:00 - 20:00</td>
+</tr>
+<tr class="border-b border-gray-200">
+<td class="py-3 font-medium">Пятница</td>
+<td class="py-3 text-right">10:00 - 21:00</td>
+</tr>
+<tr class="border-b border-gray-200">
+<td class="py-3 font-medium">Суббота</td>
+<td class="py-3 text-right">10:00 - 21:00</td>
+</tr>
+<tr>
+<td class="py-3 font-medium">Воскресенье</td>
+<td class="py-3 text-right">11:00 - 19:00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Прайс-лист -->
+<div class="md:w-1/2 bg-white p-8 rounded-lg shadow-md">
+<h2 class="text-2xl font-bold mb-6">Прайс-лист</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center border-b border-gray-200 pb-3">
+<span class="font-medium">Мужская стрижка</span>
+<span class="font-semibold">от 1500 ₽</span>
+</div>
+<div class="flex justify-between items-center border-b border-gray-200 pb-3">
+<span class="font-medium">Стрижка машинкой</span>
+<span class="font-semibold">от 800 ₽</span>
+</div>
+<div class="flex justify-between items-center border-b border-gray-200 pb-3">
+<span class="font-medium">Стрижка бороды</span>
+<span class="font-semibold">от 900 ₽</span>
+</div>
+<div class="flex justify-between items-center border-b border-gray-200 pb-3">
+<span class="font-medium">Королевское бритье</span>
+<span class="font-semibold">от 1200 ₽</span>
+</div>
+<div class="flex justify-between items-center pb-3">
+<span class="font-medium">Комплекс (стрижка + борода)</span>
+<span class="font-semibold">от 2200 ₽</span>
+</div>
+</div>
+<button id="enrollBtnPrice" class="mt-6 bg-primary text-white px-6 py-2 !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap w-full">Записаться</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Услуги -->
+<section class="py-16">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">Наши услуги</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Услуга 1 -->
+<div class="bg-white p-8 rounded-lg shadow-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-semibold">Мужская стрижка</h3>
+<span class="font-semibold">от 1500 ₽</span>
+</div>
+<div class="service-content">
+<p class="text-gray-600 mb-4">Классическая мужская стрижка включает в себя мытье головы, стрижку, укладку и консультацию по уходу за волосами. Наши мастера учитывают структуру волос, форму лица и пожелания клиента.</p>
+<div class="flex items-center text-sm text-gray-500">
+<div class="flex items-center mr-4">
+<i class="ri-time-line mr-1"></i>
+<span>45-60 мин</span>
+</div>
+<div class="flex items-center">
+<i class="ri-user-line mr-1"></i>
+<span>Любой мастер</span>
+</div>
+</div>
+</div>
+<button class="service-toggle mt-4 text-primary font-medium flex items-center">
+<span>Подробнее</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</button>
+</div>
+<!-- Услуга 2 -->
+<div class="bg-white p-8 rounded-lg shadow-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-semibold">Стрижка бороды</h3>
+<span class="font-semibold">от 900 ₽</span>
+</div>
+<div class="service-content">
+<p class="text-gray-600 mb-4">Профессиональная стрижка и моделирование бороды. Включает обработку контуров, придание формы и консультацию по уходу. Используем специальные масла и бальзамы для бороды.</p>
+<div class="flex items-center text-sm text-gray-500">
+<div class="flex items-center mr-4">
+<i class="ri-time-line mr-1"></i>
+<span>30-40 мин</span>
+</div>
+<div class="flex items-center">
+<i class="ri-user-line mr-1"></i>
+<span>Любой мастер</span>
+</div>
+</div>
+</div>
+<button class="service-toggle mt-4 text-primary font-medium flex items-center">
+<span>Подробнее</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</button>
+</div>
+<!-- Услуга 3 -->
+<div class="bg-white p-8 rounded-lg shadow-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-semibold">Королевское бритье</h3>
+<span class="font-semibold">от 1200 ₽</span>
+</div>
+<div class="service-content">
+<p class="text-gray-600 mb-4">Традиционное бритье опасной бритвой с использованием горячих полотенец, пены и масел. Включает массаж лица и нанесение увлажняющего крема после бритья.</p>
+<div class="flex items-center text-sm text-gray-500">
+<div class="flex items-center mr-4">
+<i class="ri-time-line mr-1"></i>
+<span>40-50 мин</span>
+</div>
+<div class="flex items-center">
+<i class="ri-user-line mr-1"></i>
+<span>Старший мастер</span>
+</div>
+</div>
+</div>
+<button class="service-toggle mt-4 text-primary font-medium flex items-center">
+<span>Подробнее</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</button>
+</div>
+<!-- Услуга 4 -->
+<div class="bg-white p-8 rounded-lg shadow-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-semibold">Комплекс (стрижка + борода)</h3>
+<span class="font-semibold">от 2200 ₽</span>
+</div>
+<div class="service-content">
+<p class="text-gray-600 mb-4">Полный комплекс услуг, включающий мужскую стрижку и моделирование бороды. Идеальное решение для тех, кто хочет полностью обновить свой образ за одно посещение.</p>
+<div class="flex items-center text-sm text-gray-500">
+<div class="flex items-center mr-4">
+<i class="ri-time-line mr-1"></i>
+<span>70-90 мин</span>
+</div>
+<div class="flex items-center">
+<i class="ri-user-line mr-1"></i>
+<span>Любой мастер</span>
+</div>
+</div>
+</div>
+<button class="service-toggle mt-4 text-primary font-medium flex items-center">
+<span>Подробнее</span>
+<i class="ri-arrow-down-s-line ml-1"></i>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Отзывы -->
+<section class="py-16 bg-gray-100">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">Отзывы наших клиентов</h2>
+<div class="relative">
+<div class="reviews-slider overflow-hidden">
+<div class="reviews-track flex transition-transform">
+<!-- Отзыв 1 -->
+<div class="review-slide min-w-full md:min-w-[33.333%] px-4">
+<div class="bg-white p-6 rounded-lg shadow-md h-full">
+<div class="star-rating mb-4">
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+</div>
+<p class="text-gray-600 mb-6">"Отличный барбершоп! Хожу сюда уже больше года. Мастер Алексей всегда делает именно то, что я хочу. Атмосфера приятная, персонал дружелюбный."</p>
+<div class="flex items-center">
+<div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+<div>
+<h4 class="font-semibold">Дмитрий Соколов</h4>
+<p class="text-sm text-gray-500">Постоянный клиент</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Отзыв 2 -->
+<div class="review-slide min-w-full md:min-w-[33.333%] px-4">
+<div class="bg-white p-6 rounded-lg shadow-md h-full">
+<div class="star-rating mb-4">
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span>★</span>
+</div>
+<p class="text-gray-600 mb-6">"Впервые посетил Delta по рекомендации друга. Остался очень доволен стрижкой и обслуживанием. Мастер Игорь подобрал мне новый стиль, который идеально подходит к форме моего лица."</p>
+<div class="flex items-center">
+<div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+<div>
+<h4 class="font-semibold">Антон Васильев</h4>
+<p class="text-sm text-gray-500">Новый клиент</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Отзыв 3 -->
+<div class="review-slide min-w-full md:min-w-[33.333%] px-4">
+<div class="bg-white p-6 rounded-lg shadow-md h-full">
+<div class="star-rating mb-4">
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+<span class="filled">★</span>
+</div>
+<p class="text-gray-600 mb-6">"Королевское бритье в Delta - это настоящий ритуал! Горячие полотенца, ароматное масло и идеально гладкое бритье. Теперь только сюда!"</p>
+<div class="flex items-center">
+<div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+<div>
+<h4 class="font-semibold">Михаил Петров</h4>
+<p class="text-sm text-gray-500">Постоянный клиент</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button class="review-prev absolute top-1/2 left-0 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center z-10">
+<i class="ri-arrow-left-s-line text-primary"></i>
+</button>
+<button class="review-next absolute top-1/2 right-0 transform -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center z-10">
+<i class="ri-arrow-right-s-line text-primary"></i>
+</button>
+</div>
+<div class="flex justify-center mt-8">
+<div class="slider-dots flex space-x-2">
+<button class="w-3 h-3 rounded-full bg-primary"></button>
+<button class="w-3 h-3 rounded-full bg-gray-300"></button>
+<button class="w-3 h-3 rounded-full bg-gray-300"></button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Наши работы - Delta Барбершоп</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#333333',secondary:'#666666'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Montserrat', sans-serif;
+color: #333;
+}
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+@keyframes fadeOut {
+from {
+opacity: 1;
+transform: translateY(0);
+}
+to {
+opacity: 0;
+transform: translateY(20px);
+}
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<!-- Навигация -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 py-4 flex justify-between items-center">
+<div class="flex items-center">
+<a href="index.html" class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center mr-2">
+<i class="ri-scissors-line ri-xl text-primary"></i>
+</div>
+<span class="font-['Pacifico'] text-2xl text-primary">Delta</span>
+</a>
+<nav class="ml-12 hidden md:flex items-center space-x-8">
+<a href="index.html" class="text-gray-700 hover:text-primary transition-colors">Главная</a>
+<a href="about.html" class="text-gray-700 hover:text-primary transition-colors">О нас</a>
+<a href="works.html" class="text-primary font-medium">Наши работы</a>
+</nav>
+</div>
+<div class="flex items-center">
+<button id="enrollBtn" class="bg-primary text-white px-6 py-2 !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">Записаться</button>
+</div>
+</div>
+</header>
+<!-- Основной контент -->
+<main>
+<!-- Заголовок страницы -->
+<section class="py-16 bg-gray-100">
+<div class="container mx-auto px-4 text-center">
+<h1 class="text-4xl font-bold mb-6">Наши работы</h1>
+<p class="text-xl text-gray-600 max-w-3xl mx-auto">Портфолио лучших работ наших мастеров — вдохновляйтесь и выбирайте свой следующий образ</p>
+</div>
+</section>
+<!-- Галерея работ -->
+<section class="py-16">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+<!-- Работа 1 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=professional%20male%20haircut%2C%20modern%20classic%20style%2C%20side%20part%2C%20clean%20fade%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=8&orientation=portrait" alt="Мужская стрижка 1" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Классическая стрижка с фейдом</h3>
+<p class="text-sm text-gray-500">Мастер: Алексей</p>
+</div>
+</div>
+<!-- Работа 2 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=professional%20beard%20grooming%2C%20well-shaped%20full%20beard%2C%20clean%20lines%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=9&orientation=portrait" alt="Стрижка бороды 1" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Моделирование бороды</h3>
+<p class="text-sm text-gray-500">Мастер: Игорь</p>
+</div>
+</div>
+<!-- Работа 3 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=modern%20pompadour%20haircut%2C%20volume%20on%20top%2C%20short%20sides%2C%20styled%20with%20pomade%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=10&orientation=portrait" alt="Мужская стрижка 2" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Современный помпадур</h3>
+<p class="text-sm text-gray-500">Мастер: Мария</p>
+</div>
+</div>
+<!-- Работа 4 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=textured%20crop%20haircut%2C%20modern%20messy%20style%2C%20short%20sides%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=11&orientation=portrait" alt="Мужская стрижка 3" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Текстурированный кроп</h3>
+<p class="text-sm text-gray-500">Мастер: Алексей</p>
+</div>
+</div>
+<!-- Работа 5 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=clean%20shave%2C%20professional%20straight%20razor%20shave%2C%20smooth%20result%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=12&orientation=portrait" alt="Королевское бритье" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Королевское бритье</h3>
+<p class="text-sm text-gray-500">Мастер: Игорь</p>
+</div>
+</div>
+<!-- Работа 6 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=undercut%20hairstyle%2C%20disconnected%20top%2C%20slicked%20back%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=13&orientation=portrait" alt="Мужская стрижка 4" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Андеркат</h3>
+<p class="text-sm text-gray-500">Мастер: Мария</p>
+</div>
+</div>
+</div>
+<!-- Дополнительные работы (скрыты по умолчанию) -->
+<div id="moreWorks" class="more-works grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
+<!-- Работа 7 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=french%20crop%20haircut%2C%20textured%20top%2C%20clean%20fade%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=14&orientation=portrait" alt="Мужская стрижка 5" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Французский кроп</h3>
+<p class="text-sm text-gray-500">Мастер: Алексей</p>
+</div>
+</div>
+<!-- Работа 8 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=short%20beard%20styling%2C%20neat%20trim%2C%20defined%20lines%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=15&orientation=portrait" alt="Стрижка бороды 2" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Короткая борода</h3>
+<p class="text-sm text-gray-500">Мастер: Игорь</p>
+</div>
+</div>
+<!-- Работа 9 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=slicked%20back%20hairstyle%2C%20medium%20length%2C%20volume%2C%20studio%20photo%20with%20neutral%20background%2C%20high%20quality%20professional%20barber%20work&width=400&height=500&seq=16&orientation=portrait" alt="Мужская стрижка 6" class="w-full h-80 object-cover object-top">
+<div class="p-4">
+<h3 class="font-semibold">Зачесанные назад волосы</h3>
+<p class="text-sm text-gray-500">Мастер: Мария</p>
+</div>
+</div>
+</div>
+<div class="text-center mt-10">
+<button id="showMoreWorks" class="bg-primary text-white px-8 py-3 !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">Показать больше</button>
+</div>
+</div>
+</section>
+<!-- Категории работ -->
+<section class="py-16 bg-gray-100">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">Категории</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+<div class="bg-white p-6 rounded-lg shadow-md text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-scissors-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-2">Классические стрижки</h3>
+<p class="text-gray-600">Элегантные и проверенные временем стили</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-md text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-scissors-2-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-2">Современные стрижки</h3>
+<p class="text-gray-600">Трендовые стили для смелых и креативных</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-md text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-brush-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-2">Уход за бородой</h3>
+<p class="text-gray-600">Моделирование и уход за бородой любой длины</p>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-md text-center">
+<div class="w-16 h-16 flex items-center justify-center mx-auto mb-4 bg-gray-100 rounded-full">
+<i class="ri-knife-line ri-2x text-primary"></i>
+</div>
+<h3 class="text-xl font-semibold mb-2">Бритье</h3>
+<p class="text-gray-600">Традиционное и королевское бритье</p>
+</div>
+</div>
+</div>
+</section>
+<div class="container mx-auto px-4 text-center">
+<h1 class="text-4xl font-bold mb-6">О нас</h1>
+<p class="text-xl text-gray-600 max-w-3xl mx-auto">Мы команда профессионалов, объединенных любовью к своему делу и стремлением создавать безупречные образы для наших клиентов</p>
+</div>
+</section>
+<!-- Наши барберы -->
+<section class="py-16">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">Наши барберы</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Барбер 1 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=professional%20male%20barber%20with%20beard%20and%20stylish%20haircut%2C%20wearing%20barber%20apron%2C%20confident%20pose%2C%20studio%20portrait%20with%20neutral%20background%2C%20high%20quality%20professional%20photo&width=400&height=500&seq=2&orientation=portrait" alt="Алексей" class="w-full h-80 object-cover object-top">
+<div class="p-6">
+<h3 class="text-xl font-semibold mb-2">Алексей Морозов</h3>
+<p class="text-gray-500 mb-4">32 года, старший барбер</p>
+<p class="text-gray-600">Опыт работы более 10 лет. Специализируется на классических стрижках и королевском бритье.</p>
+</div>
+</div>
+<!-- Барбер 2 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=young%20male%20barber%20with%20tattoos%20and%20modern%20haircut%2C%20wearing%20barber%20apron%2C%20creative%20style%2C%20studio%20portrait%20with%20neutral%20background%2C%20high%20quality%20professional%20photo&width=400&height=500&seq=3&orientation=portrait" alt="Игорь" class="w-full h-80 object-cover object-top">
+<div class="p-6">
+<h3 class="text-xl font-semibold mb-2">Игорь Волков</h3>
+<p class="text-gray-500 mb-4">28 лет, барбер</p>
+<p class="text-gray-600">Креативный мастер с уникальным подходом к каждому клиенту. Эксперт в современных трендах.</p>
+</div>
+</div>
+<!-- Барбер 3 -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=professional%20female%20barber%20with%20short%20stylish%20haircut%2C%20wearing%20barber%20apron%2C%20confident%20pose%2C%20studio%20portrait%20with%20neutral%20background%2C%20high%20quality%20professional%20photo&width=400&height=500&seq=4&orientation=portrait" alt="Мария" class="w-full h-80 object-cover object-top">
+<div class="p-6">
+<h3 class="text-xl font-semibold mb-2">Мария Соловьева</h3>
+<p class="text-gray-500 mb-4">30 лет, барбер</p>
+<p class="text-gray-600">Мастер с художественным образованием. Создает уникальные образы, сочетающие классику и современность.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Цитаты барберов -->
+<section class="py-16 bg-gray-100">
+<div class="container mx-auto px-4">
+<h2 class="text-3xl font-bold text-center mb-12">Наша философия</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-white p-8 rounded-lg shadow-md">
+<div class="w-12 h-12 flex items-center justify-center mb-4 text-4xl text-primary">
+<i class="ri-double-quotes-l"></i>
+</div>
+<p class="text-lg text-gray-600 mb-6">«Для меня барберинг — это не просто профессия, а искусство. Каждая стрижка — это возможность помочь человеку выразить себя и почувствовать уверенность. Я верю, что правильная стрижка может изменить не только внешний вид, но и настроение.»</p>
+<div class="flex items-center">
+<div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+<img src="https://readdy.ai/api/search-image?query=professional%20male%20barber%20with%20beard%20and%20stylish%20haircut%2C%20close-up%20portrait%2C%20neutral%20background&width=100&height=100&seq=5&orientation=squarish" alt="Алексей" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h4 class="font-semibold">Алексей Морозов</h4>
+<p class="text-sm text-gray-500">Старший барбер</p>
+</div>
+</div>
+</div>
+<div class="bg-white p-8 rounded-lg shadow-md">
+<div class="w-12 h-12 flex items-center justify-center mb-4 text-4xl text-primary">
+<i class="ri-double-quotes-l"></i>
+</div>
+<p class="text-lg text-gray-600 mb-6">«Современный мужчина должен выглядеть стильно и ухоженно. Я помогаю своим клиентам найти свой уникальный стиль, который подчеркнет их индивидуальность и будет соответствовать образу жизни. В нашей работе важны детали и персональный подход.»</p>
+<div class="flex items-center">
+<div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden mr-4">
+<img src="https://readdy.ai/api/search-image?query=young%20male%20barber%20with%20tattoos%20and%20modern%20haircut%2C%20close-up%20portrait%2C%20neutral%20background&width=100&height=100&seq=6&orientation=squarish" alt="Игорь" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h4 class="font-semibold">Игорь Волков</h4>
+<p class="text-sm text-gray-500">Барбер</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- История барбершопа -->
+<section class="py-16">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row items-center gap-8">
+<div class="md:w-1/2">
+<img src="https://readdy.ai/api/search-image?query=modern%20barbershop%20interior%20with%20vintage%20elements%2C%20stylish%20chairs%2C%20mirrors%2C%20and%20barber%20tools%2C%20gray%20and%20white%20color%20scheme%2C%20professional%20atmosphere%2C%20warm%20lighting%2C%20high-quality%20equipment&width=600&height=400&seq=7&orientation=landscape" alt="История барбершопа" class="w-full h-auto rounded-lg shadow-lg">
+</div>
+<div class="md:w-1/2">
+<h2 class="text-3xl font-bold mb-6">Наша история</h2>
+<p class="text-gray-600 mb-4">Барбершоп Delta был основан в 2015 году группой энтузиастов, объединенных общей идеей — создать место, где мужчины могут получить не только качественные услуги по уходу за внешностью, но и насладиться особой атмосферой.</p>
+<p class="text-gray-600 mb-4">За годы работы мы собрали команду профессионалов, постоянно совершенствующих свое мастерство. Наши барберы регулярно участвуют в международных конкурсах и мастер-классах, чтобы быть в курсе последних тенденций.</p>
+<p class="text-gray-600">Сегодня Delta — это не просто барбершоп, а сообщество единомышленников, где ценят стиль, качество и индивидуальный подход к каждому клиенту.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Футер -->
+<footer class="bg-gray-800 text-white py-12">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row justify-between">
+<div class="mb-8 md:mb-0">
+<div class="flex items-center mb-4">
+<div class="w-10 h-10 flex items-center justify-center mr-2">
+<i class="ri-scissors-line ri-xl"></i>
+</div>
+<span class="font-['Pacifico'] text-2xl">Delta</span>
+</div>
+<p class="text-gray-400 max-w-xs">Профессиональный барбершоп, где каждый мужчина может получить качественные услуги в атмосфере комфорта и стиля.</p>
+</div>
+<div class="mb-8 md:mb-0">
+<h3 class="text-lg font-semibold mb-4">Контакты</h3>
+<ul class="space-y-3">
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center mr-2">
+<i class="ri-map-pin-line"></i>
+</div>
+<span>ул. Ленина, 123, Москва</span>
+</li>
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center mr-2">
+<i class="ri-phone-line"></i>
+</div>
+<span>+7 (999) 123-45-67</span>
+</li>
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center mr-2">
+<i class="ri-mail-line"></i>
+</div>
+<span>info@delta-barbershop.ru</span>
+</li>
+</ul>
+</div>
+<div class="mb-8 md:mb-0">
+<h3 class="text-lg font-semibold mb-4">Часы работы</h3>
+<ul class="space-y-2">
+<li class="flex justify-between">
+<span>Пн-Чт:</span>
+<span>10:00 - 20:00</span>
+</li>
+<li class="flex justify-between">
+<span>Пт-Сб:</span>
+<span>10:00 - 21:00</span>
+</li>
+<li class="flex justify-between">
+<span>Вс:</span>
+<span>11:00 - 19:00</span>
+</li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-semibold mb-4">Мы в соцсетях</h3>
+<div class="flex space-x-4">
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full hover:bg-primary transition-colors">
+<i class="ri-instagram-line"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full hover:bg-primary transition-colors">
+<i class="ri-vk-line"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full hover:bg-primary transition-colors">
+<i class="ri-telegram-line"></i>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 Delta Барбершоп. Все права защищены.</p>
+<div class="flex space-x-6">
+<a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Политика конфиденциальности</a>
+<a href="#" class="text-gray-400 text-sm hover:text-white transition-colors">Условия использования</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- Модальное окно записи -->
+<div id="enrollModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+<div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-2xl font-bold">Запись на услугу</h3>
+<button id="closeModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-close-line ri-xl"></i>
+</button>
+</div>
+<form id="enrollForm">
+<div class="mb-4">
+<label for="name" class="block text-gray-700 font-medium mb-2">Ваше имя</label>
+<input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+</div>
+<div class="mb-4">
+<label for="phone" class="block text-gray-700 font-medium mb-2">Телефон</label>
+<input type="tel" id="phone" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<label for="date" class="block text-gray-700 font-medium mb-2">Дата</label>
+<input type="date" id="date" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+</div>
+<div>
+<label for="time" class="block text-gray-700 font-medium mb-2">Время</label>
+<input type="time" id="time" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+</div>
+</div>
+<div class="mb-4">
+<label for="service" class="block text-gray-700 font-medium mb-2">Услуга</label>
+<div class="relative">
+<select id="service" class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
+<option value="">Выберите услугу</option>
+<option value="haircut">Мужская стрижка (от 1500 ₽)</option>
+<option value="beard">Стрижка бороды (от 900 ₽)</option>
+<option value="shave">Королевское бритье (от 1200 ₽)</option>
+<option value="complex">Комплекс (от 2200 ₽)</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<div class="mb-6">
+<label for="barber" class="block text-gray-700 font-medium mb-2">Мастер</label>
+<div class="relative">
+<select id="barber" class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
+<option value="">Выберите мастера</option>
+<option value="alexey">Алексей</option>
+<option value="igor">Игорь</option>
+<option value="maria">Мария</option>
+<option value="any">Любой мастер</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<button type="submit" class="w-full bg-primary text-white py-3 !rounded-button font-medium hover:bg-opacity-90 transition-colors whitespace-nowrap">Записаться</button>
+</form>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const enrollBtn = document.getElementById('enrollBtn');
+const modal = document.getElementById('enrollModal');
+const closeModal = document.getElementById('closeModal');
+const enrollForm = document.getElementById('enrollForm');
+function openModal() {
+modal.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+}
+function closeModalFunc() {
+modal.classList.add('hidden');
+document.body.style.overflow = '';
+}
+enrollBtn.addEventListener('click', openModal);
+closeModal.addEventListener('click', closeModalFunc);
+modal.addEventListener('click', function(e) {
+if (e.target === modal) {
+closeModalFunc();
+}
+});
+enrollForm.addEventListener('submit', function(e) {
+e.preventDefault();
+const formData = new FormData(enrollForm);
+const formObject = {};
+formData.forEach((value, key) => {
+formObject[key] = value;
+});
+const successMessage = document.createElement('div');
+successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50';
+successMessage.textContent = 'Спасибо за запись! Мы свяжемся с вами для подтверждения.';
+document.body.appendChild(successMessage);
+setTimeout(() => {
+successMessage.remove();
+}, 3000);
+closeModalFunc();
+enrollForm.reset();
+});
+});
+</script>
+</body>
+</html>
